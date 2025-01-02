@@ -1,12 +1,20 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/weather_model.dart';
 import '../models/forecast_model.dart';
 
 class WeatherService {
   final Dio _dio = Dio();
-  final String _apiKey =
-      'efd4a3176fa9146479ba8b198cc3b6b6'; // OpenWeatherMap'ten aldığınız API anahtarını buraya ekleyin
+  late final String _apiKey;
   final String _baseUrl = 'https://api.openweathermap.org/data/2.5';
+
+  WeatherService() {
+    _apiKey = dotenv.env['OPENWEATHER_API_KEY'] ?? '';
+    if (_apiKey.isEmpty) {
+      throw Exception(
+          'API anahtarı bulunamadı. Lütfen .env dosyasını kontrol edin.');
+    }
+  }
 
   Future<WeatherModel> getWeatherByCity(String city) async {
     try {
